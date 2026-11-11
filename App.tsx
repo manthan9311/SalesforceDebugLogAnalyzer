@@ -3,6 +3,7 @@ import { FileUpload } from './components/FileUpload';
 import { StackTraceDisplay } from './components/StackTraceDisplay';
 import { parseLogFile, analyzeStackTrace } from './utils/logParser';
 import { LogEntry, StackTrace } from './types/LogEntry';
+import { trackEvent } from './analytics';
 import { FileCode, Search } from 'lucide-react';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
     setFileName(name);
     const entries = parseLogFile(content);
     setLogEntries(entries);
+    trackEvent('log_uploaded', { line_count: entries.length });
     setStackTrace(null);
     setLineNumber('');
     setError('');
@@ -39,6 +41,7 @@ function App() {
     setError('');
     const result = analyzeStackTrace(logEntries, line);
     setStackTrace(result);
+    trackEvent('stack_trace_analyzed', { stack_depth: result.stack.length });
   };
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
